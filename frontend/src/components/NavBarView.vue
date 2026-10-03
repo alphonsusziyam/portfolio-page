@@ -26,13 +26,19 @@ function closeMenu() {
       </button>
 
       <nav :class="{ open: menuOpen }">
-        <a href="/about" @click="closeMenu"> Über mich </a>
+        <a href="/portfolio-page/about" @click="closeMenu"> Über mich </a>
 
-        <a href="/skills" @click="closeMenu"> Skills </a>
+        <a href="/portfolio-page/skills" @click="closeMenu"> Skills </a>
 
-        <a href="/#projects" @click="closeMenu"> Projekte </a>
+        <a href="/portfolio-page/#projects" @click="closeMenu"> Projekte </a>
 
-        <a href="#contact" class="nav-contact" @click="closeMenu"> Kontakt </a>
+        <a
+          href="/portfolio-page/#contact"
+          class="nav-contact"
+          @click="closeMenu"
+        >
+          Kontakt
+        </a>
       </nav>
     </div>
   </header>

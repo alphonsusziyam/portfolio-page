@@ -130,19 +130,28 @@ const projects: Record<string, Project> = {
 
     screenshots: [
       {
-        image: "/src/assets/ecocharge/ecocharge_home.png",
+        image: new URL(
+          "../assets/ecocharge/ecocharge_home.png",
+          import.meta.url,
+        ).href,
         title: "Ladeplan",
         description:
           "Der Ladeplan zeigt dem Benutzer den empfohlenen Ladezeitpunkt sowie alternative Möglichkeiten. Die Empfehlung basiert auf den hinterlegten Ladepräferenzen und verfügbaren Energiedaten.",
       },
       {
-        image: "/src/assets/ecocharge/ecocharge_login.png",
+        image: new URL(
+          "../assets/ecocharge/ecocharge_login.png",
+          import.meta.url,
+        ).href,
         title: "Smartcar API Anbindung",
         description:
           "Über die Smartcar API ruft EcoCharge Fahrzeugdaten wie Akkustand und Batteriekapazität ab. Diese Daten werden für die Berechnung der benötigten Energiemenge und des optimalen Ladezeitpunkts verwendet.",
       },
       {
-        image: "/src/assets/ecocharge/ecocharge_settings.png",
+        image: new URL(
+          "../assets/ecocharge/ecocharge_settings.png",
+          import.meta.url,
+        ).href,
         title: "Einstellungen",
         description:
           "Über die Einstellungen können unter anderem Ladepräferenzen, Wallbox-Leistung, Photovoltaikanlage und Fahrzeugdaten konfiguriert werden.",
@@ -195,19 +204,22 @@ const projects: Record<string, Project> = {
 
     screenshots: [
       {
-        image: "/src/assets/orderly/orderly_menu.png",
+        image: new URL("../assets/orderly/orderly_menu.png", import.meta.url)
+          .href,
         title: "Digitale Speisekarte",
         description:
           "Die digitale Speisekarte zeigt das aktuelle Angebot des Restaurants übersichtlich an. Gäste können die verschiedenen Gerichte auswählen, anpassen und direkt über die Webapplikation eine Bestellung aufgeben.",
       },
       {
-        image: "/src/assets/orderly/orderly_orders.png",
+        image: new URL("../assets/orderly/orderly_orders.png", import.meta.url)
+          .href,
         title: "Bestellmonitor",
         description:
           "Auf dem Bestellmonitor werden die eingegangenen Bestellungen in Echtzeit angezeigt. Mitarbeitende können dadurch schnell erkennen, welche Bestellungen neu eingegangen sind und bearbeitet werden müssen.",
       },
       {
-        image: "/src/assets/orderly/orderly_kitchen.png",
+        image: new URL("../assets/orderly/orderly_kitchen.png", import.meta.url)
+          .href,
         title: "Mitarbeiterbereich",
         description:
           "Die Mitarbeiteroberfläche ermöglicht die Verwaltung der Bestellungen. Der aktuelle Status einer Bestellung kann angepasst werden, sodass jederzeit ersichtlich ist, welche Bestellungen noch offen, in Bearbeitung oder bereits abgeschlossen sind.",
@@ -219,7 +231,7 @@ const projects: Record<string, Project> = {
 };
 
 const project = computed(() => {
-  return projects[route.params.slug as string];
+  return projects[route.params.id as string];
 });
 </script>
 
@@ -231,7 +243,7 @@ const project = computed(() => {
 
     <section class="project-hero">
       <div class="project-container">
-        <RouterLink to="/#projects" class="back-link">
+        <RouterLink to="#projects" class="back-link">
           <span>←</span>
           Zurück zu Projekten
         </RouterLink>
@@ -504,7 +516,7 @@ const project = computed(() => {
 
     <h1>Projekt nicht gefunden.</h1>
 
-    <RouterLink to="/"> Zurück zur Startseite </RouterLink>
+    <RouterLink to="/portfolio-page/"> Zurück zur Startseite </RouterLink>
   </main>
 </template>
 
