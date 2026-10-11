@@ -22,9 +22,11 @@ import { RouterLink } from "vue-router";
           </p>
 
           <div class="hero-buttons">
-            <a href="/#projects" class="btn btn-primary"> Projekte ansehen </a>
+            <RouterLink to="/#projects" class="button primary">
+              Projekte ansehen
+            </RouterLink>
 
-            <RouterLink to="/about" class="btn btn-secondary">
+            <RouterLink to="/about" class="button secondary">
               Über mich
             </RouterLink>
           </div>
@@ -34,7 +36,7 @@ import { RouterLink } from "vue-router";
       <!-- WHAT I DO -->
       <section class="what-i-do">
         <div class="container">
-          <div class="section-header">
+          <div class="section-heading">
             <p class="section-label">WAS ICH MACHE</p>
             <h2>Von der Idee bis zur Umsetzung.</h2>
           </div>
@@ -208,10 +210,5 @@ import { RouterLink } from "vue-router";
         </div>
       </section>
     </main>
-
-    <footer>
-      <p>© 2026 Ziyam Alphonsus</p>
-      <p>Built with Vue & TypeScript</p>
-    </footer>
   </div>
 </template>

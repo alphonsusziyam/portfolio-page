@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from "vue";
+import { onMounted, onBeforeUnmount, ref, watch } from "vue";
 
 import {
   Chart,
@@ -11,6 +11,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+
+import { useTheme } from "../composables/useTheme";
 
 /* =========================================
    CHART.JS
@@ -49,6 +51,40 @@ const languages = [
 ];
 
 /* =========================================
+   THEME-FARBEN
+   Das Canvas kennt kein CSS, deshalb lesen wir
+   die Farben aus den CSS-Variablen in style.css.
+========================================= */
+
+const { theme } = useTheme();
+
+function cssVar(name: string): string {
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+}
+
+function chartColors() {
+  return {
+    line: cssVar("--accent-ink"),
+    fill: cssVar("--chart-fill"),
+    pointBorder: cssVar("--surface"),
+    grid: cssVar("--chart-grid"),
+    label: cssVar("--text-muted"),
+  };
+}
+
+/* Beschriftung skaliert mit der Basisschrift (TV / 4K) */
+
+function labelFontSize(): number {
+  const rootSize = parseFloat(
+    getComputedStyle(document.documentElement).fontSize,
+  );
+
+  return (rootSize || 16) * 0.75;
+}
+
+/* =========================================
    RADAR CHART
 ========================================= */
 
@@ -56,14 +92,12 @@ const radarChart = ref<HTMLCanvasElement | null>(null);
 
 let radarChartInstance: Chart | null = null;
 
-/* =========================================
-   CREATE CHART
-========================================= */
-
-onMounted(() => {
+function createChart(animate: boolean) {
   if (!radarChart.value) {
     return;
   }
+
+  const colors = chartColors();
 
   radarChartInstance = new Chart(radarChart.value, {
     type: "radar",
@@ -85,13 +119,13 @@ onMounted(() => {
 
           data: [90, 85, 75, 85, 75, 80, 60],
 
-          backgroundColor: "rgba(0, 229, 160, 0.12)",
-          borderColor: "#00e5a0",
+          backgroundColor: colors.fill,
+          borderColor: colors.line,
 
           borderWidth: 2,
 
-          pointBackgroundColor: "#00e5a0",
-          pointBorderColor: "#101010",
+          pointBackgroundColor: colors.line,
+          pointBorderColor: colors.pointBorder,
           pointBorderWidth: 2,
 
           pointRadius: 4,
@@ -103,6 +137,8 @@ onMounted(() => {
     options: {
       responsive: true,
       maintainAspectRatio: true,
+
+      ...(animate ? {} : { animation: false as const }),
 
       plugins: {
         legend: {
@@ -131,21 +167,21 @@ onMounted(() => {
           },
 
           grid: {
-            color: "#292929",
+            color: colors.grid,
             lineWidth: 1,
           },
 
           angleLines: {
-            color: "#292929",
+            color: colors.grid,
             lineWidth: 1,
           },
 
           pointLabels: {
-            color: "#999999",
+            color: colors.label,
 
             font: {
               family: "Inter",
-              size: 12,
+              size: labelFontSize(),
               weight: 500,
             },
 
@@ -155,6 +191,19 @@ onMounted(() => {
       },
     },
   });
+}
+
+onMounted(() => {
+  createChart(true);
+});
+
+/* Beim Wechsel Hell / Dunkel Chart mit neuen Farben neu aufbauen */
+
+watch(theme, () => {
+  radarChartInstance?.destroy();
+  radarChartInstance = null;
+
+  createChart(false);
 });
 
 /* =========================================
@@ -354,440 +403,3 @@ onBeforeUnmount(() => {
     </section>
   </main>
 </template>
-
-<style scoped>
-/* =========================================
-   SKILLS PAGE
-========================================= */
-
-.skills-page {
-  padding-bottom: 100px;
-}
-
-.skills-section {
-  padding: 80px 0;
-
-  border-top: 1px solid #272727;
-}
-
-.languages-section {
-  margin-top: 20px;
-}
-
-/* =========================================
-   SECTION HEADER
-========================================= */
-
-.skills-header {
-  display: flex;
-  align-items: flex-start;
-
-  gap: 30px;
-
-  margin-bottom: 55px;
-}
-
-.section-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 42px;
-  height: 42px;
-
-  flex-shrink: 0;
-
-  border: 1px solid #333;
-  border-radius: 50%;
-
-  color: #00e5a0;
-
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.skills-header .section-label {
-  margin-bottom: 8px;
-}
-
-.skills-header h2 {
-  margin: 0;
-
-  font-size: clamp(28px, 4vw, 42px);
-
-  font-weight: 600;
-
-  letter-spacing: -1px;
-}
-
-/* =========================================
-   SKILL LIST
-========================================= */
-
-.skills-list {
-  display: grid;
-
-  grid-template-columns: repeat(2, 1fr);
-
-  gap: 42px 70px;
-
-  max-width: 1100px;
-}
-
-.skill-item {
-  width: 100%;
-
-  transition: transform 0.2s ease;
-}
-
-/* =========================================
-   SKILL TEXT
-========================================= */
-
-.skill-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  margin-bottom: 12px;
-}
-
-.skill-name {
-  color: #eeeeee;
-
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.skill-level {
-  color: #888888;
-
-  font-size: 13px;
-
-  font-variant-numeric: tabular-nums;
-}
-
-/* =========================================
-   SKILL BAR
-========================================= */
-
-.skill-bar {
-  position: relative;
-
-  width: 100%;
-  height: 5px;
-
-  overflow: hidden;
-
-  background: #252525;
-
-  border-radius: 10px;
-}
-
-.skill-progress {
-  height: 100%;
-
-  background: #00e5a0;
-
-  border-radius: 10px;
-
-  transform-origin: left;
-
-  animation: skillLoad 1s ease-out both;
-}
-
-/* =========================================
-   RADAR
-========================================= */
-
-.radar-section {
-  padding-top: 70px;
-}
-
-.radar-wrapper {
-  display: grid;
-
-  grid-template-columns:
-    minmax(350px, 1fr)
-    minmax(280px, 0.7fr);
-
-  align-items: center;
-
-  gap: 70px;
-
-  max-width: 1100px;
-}
-
-.radar-chart {
-  width: 100%;
-  max-width: 520px;
-
-  margin: 0 auto;
-}
-
-.radar-chart canvas {
-  display: block;
-
-  width: 100% !important;
-  height: auto !important;
-}
-
-/* =========================================
-   RADAR INFO
-========================================= */
-
-.radar-info {
-  display: flex;
-  flex-direction: column;
-
-  gap: 24px;
-
-  width: 100%;
-}
-
-.radar-info-item {
-  width: 100%;
-}
-
-.radar-info-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  margin-bottom: 9px;
-}
-
-.radar-info-item span {
-  color: #eeeeee;
-
-  font-size: 14px;
-}
-
-.radar-info-item strong {
-  color: #888888;
-
-  font-size: 13px;
-
-  font-weight: 500;
-}
-
-/* =========================================
-   MINI BARS
-========================================= */
-
-.mini-bar {
-  width: 100%;
-  height: 3px;
-
-  overflow: hidden;
-
-  background: #252525;
-
-  border-radius: 10px;
-}
-
-.mini-progress {
-  height: 100%;
-
-  background: #00e5a0;
-
-  border-radius: 10px;
-
-  animation: skillLoad 1s ease-out both;
-}
-
-/* =========================================
-   RADAR DESCRIPTION
-========================================= */
-
-.radar-description {
-  max-width: 700px;
-
-  margin: 35px 0 0;
-
-  color: #777777;
-
-  font-size: 13px;
-
-  line-height: 1.6;
-}
-
-/* =========================================
-   NOTE
-========================================= */
-
-.skill-note {
-  display: flex;
-  align-items: flex-start;
-
-  gap: 16px;
-
-  max-width: 900px;
-
-  margin-top: 30px;
-
-  padding: 22px 24px;
-
-  border: 1px solid #292929;
-
-  border-radius: 8px;
-
-  background: #151515;
-}
-
-.note-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 22px;
-  height: 22px;
-
-  flex-shrink: 0;
-
-  border: 1px solid #555;
-
-  border-radius: 50%;
-
-  color: #999999;
-
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.skill-note p {
-  margin: 0;
-
-  color: #777777;
-
-  font-size: 13px;
-
-  line-height: 1.6;
-}
-
-/* =========================================
-   ANIMATIONS
-========================================= */
-
-@keyframes skillLoad {
-  from {
-    transform: scaleX(0);
-  }
-
-  to {
-    transform: scaleX(1);
-  }
-}
-
-/* =========================================
-   HOVER
-========================================= */
-
-@media (hover: hover) and (pointer: fine) {
-  .skill-item:hover {
-    transform: translateX(4px);
-  }
-
-  .skill-item:hover .skill-progress,
-  .radar-info-item:hover .mini-progress {
-    filter: brightness(1.15);
-  }
-}
-
-/* =========================================
-   TABLET
-========================================= */
-
-@media (max-width: 850px) {
-  .radar-wrapper {
-    grid-template-columns: 1fr;
-
-    gap: 50px;
-  }
-
-  .radar-chart {
-    max-width: 500px;
-  }
-
-  .radar-info {
-    max-width: 600px;
-
-    margin: 0 auto;
-  }
-
-  .skills-list {
-    grid-template-columns: 1fr;
-
-    gap: 30px;
-  }
-}
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media (max-width: 600px) {
-  .skills-page {
-    padding-bottom: 70px;
-  }
-
-  .skills-section {
-    padding: 50px 0;
-  }
-
-  .skills-header {
-    gap: 18px;
-
-    margin-bottom: 35px;
-  }
-
-  .section-number {
-    width: 36px;
-    height: 36px;
-
-    font-size: 11px;
-  }
-
-  .skills-header h2 {
-    font-size: 28px;
-  }
-
-  .skill-name {
-    font-size: 14px;
-  }
-
-  .skill-level {
-    font-size: 12px;
-  }
-
-  .skill-bar {
-    height: 4px;
-  }
-
-  .radar-wrapper {
-    gap: 35px;
-  }
-
-  .radar-chart {
-    width: 100%;
-  }
-
-  .radar-info {
-    gap: 20px;
-  }
-
-  .radar-info-item span {
-    font-size: 13px;
-  }
-
-  .skill-note {
-    padding: 18px;
-
-    gap: 12px;
-  }
-
-  .skill-note p {
-    font-size: 12px;
-  }
-}
-</style>

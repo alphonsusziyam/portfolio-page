@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
+import { useTheme } from "../composables/useTheme";
 
 declare global {
   interface Window {
@@ -7,6 +8,8 @@ declare global {
     google: any;
   }
 }
+
+const { theme, toggleTheme } = useTheme();
 
 const changeLanguage = (language: string) => {
   const select = document.querySelector(
@@ -62,8 +65,8 @@ onMounted(() => {
       <!-- Exakt Mitte -->
       <div class="footer-tech">Built with Vue & TypeScript</div>
 
-      <!-- Rechts -->
-      <div class="footer-languages">
+      <!-- Rechts: Sprache & Design -->
+      <div class="footer-controls">
         <!-- Deutschland -->
         <button
           class="language-button"
@@ -111,6 +114,38 @@ onMounted(() => {
             <rect x="16" width="8" height="16" fill="#EF4135" />
           </svg>
         </button>
+
+        <span class="footer-divider" aria-hidden="true"></span>
+
+        <!-- Hell- / Dunkelmodus -->
+        <button
+          class="theme-toggle"
+          type="button"
+          :title="
+            theme === 'dark'
+              ? 'Zum hellen Modus wechseln'
+              : 'Zum dunklen Modus wechseln'
+          "
+          :aria-label="
+            theme === 'dark'
+              ? 'Zum hellen Modus wechseln'
+              : 'Zum dunklen Modus wechseln'
+          "
+          @click="toggleTheme"
+        >
+          <!-- Sonne (im Dunkelmodus sichtbar) -->
+          <svg v-if="theme === 'dark'" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+            />
+          </svg>
+
+          <!-- Mond (im Hellmodus sichtbar) -->
+          <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
       </div>
 
       <!-- Google Translate -->
@@ -118,155 +153,3 @@ onMounted(() => {
     </div>
   </footer>
 </template>
-
-<style scoped>
-.site-footer {
-  width: 100%;
-  margin-top: 80px;
-
-  border-top: 1px solid var(--border);
-  background: var(--background);
-}
-
-.footer-container {
-  width: 100%;
-  max-width: var(--container);
-
-  min-height: 90px;
-
-  margin: 0 auto;
-  padding: 0 var(--padding);
-
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-/* Linksbündig */
-
-.footer-name {
-  justify-self: start;
-
-  color: var(--text-muted);
-  font-size: 11px;
-  white-space: nowrap;
-}
-
-/* Exakt zentriert */
-
-.footer-tech {
-  justify-self: center;
-
-  color: var(--text-muted);
-  font-size: 11px;
-  white-space: nowrap;
-}
-
-/* Rechtsbündig */
-
-.footer-languages {
-  justify-self: end;
-
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Sprachbuttons */
-
-.language-button {
-  width: 34px;
-  height: 24px;
-
-  padding: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 1px solid var(--border);
-  border-radius: 4px;
-
-  background: var(--surface);
-
-  cursor: pointer;
-
-  transition:
-    border-color 0.2s ease,
-    transform 0.2s ease,
-    background 0.2s ease;
-}
-
-.language-button svg {
-  display: block;
-
-  width: 22px;
-  height: 15px;
-
-  border-radius: 2px;
-}
-
-.language-button:hover {
-  border-color: var(--accent);
-  background: var(--surface-light);
-  transform: translateY(-1px);
-}
-
-.language-button:active {
-  transform: translateY(0);
-}
-
-/* Google Translate verstecken */
-
-#google_translate_element {
-  display: none;
-}
-
-:deep(.goog-te-gadget) {
-  display: none !important;
-}
-
-:deep(.goog-te-banner-frame) {
-  display: none !important;
-}
-
-/* Mobile */
-
-@media (max-width: 700px) {
-  .site-footer {
-    margin-top: 60px;
-  }
-
-  .footer-container {
-    min-height: auto;
-
-    padding-top: 24px;
-    padding-bottom: 24px;
-
-    display: grid;
-
-    grid-template-columns: 1fr;
-    gap: 16px;
-
-    text-align: center;
-  }
-
-  .footer-name,
-  .footer-tech,
-  .footer-languages {
-    justify-self: center;
-  }
-
-  .footer-name {
-    order: 1;
-  }
-
-  .footer-tech {
-    order: 2;
-  }
-
-  .footer-languages {
-    order: 3;
-  }
-}
-</style>

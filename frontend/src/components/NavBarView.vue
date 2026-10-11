@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { RouterLink } from "vue-router";
 
 const menuOpen = ref(false);
 
@@ -11,9 +12,9 @@ function closeMenu() {
 <template>
   <header class="navbar">
     <div class="nav-container">
-      <a href="/" class="logo" @click="closeMenu">
+      <RouterLink to="/" class="logo" @click="closeMenu">
         <span>&lt;</span>Z.ALPHONSUS<span>/&gt;</span>
-      </a>
+      </RouterLink>
 
       <button
         class="menu-button"
@@ -26,19 +27,15 @@ function closeMenu() {
       </button>
 
       <nav :class="{ open: menuOpen }">
-        <a href="/portfolio-page/about" @click="closeMenu"> Über mich </a>
+        <RouterLink to="/about" @click="closeMenu"> Über mich </RouterLink>
 
-        <a href="/portfolio-page/skills" @click="closeMenu"> Skills </a>
+        <RouterLink to="/skills" @click="closeMenu"> Skills </RouterLink>
 
-        <a href="/portfolio-page/#projects" @click="closeMenu"> Projekte </a>
+        <RouterLink to="/#projects" @click="closeMenu"> Projekte </RouterLink>
 
-        <a
-          href="/portfolio-page/#contact"
-          class="nav-contact"
-          @click="closeMenu"
-        >
+        <RouterLink to="/#contact" class="nav-contact" @click="closeMenu">
           Kontakt
-        </a>
+        </RouterLink>
       </nav>
     </div>
   </header>
