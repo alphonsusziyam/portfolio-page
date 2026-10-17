@@ -23,6 +23,7 @@ interface Project {
   screenshots: Screenshot[];
   demo?: string;
   github?: string;
+  documentation?: string;
 }
 
 const projects: Record<string, Project> = {
@@ -71,27 +72,28 @@ const projects: Record<string, Project> = {
 
     screenshots: [
       {
-        image: `${import.meta.env.BASE_URL}projects/looply/home.png`,
+        image: new URL("../assets/looply/home.png", import.meta.url).href,
         title: "Startseite",
         description:
           "Die Startseite bietet einen Überblick über die Plattform und aktuelle Produkte. Über die Navigation können Benutzer direkt zur Produktsuche oder zu ihrem persönlichen Bereich wechseln.",
       },
       {
-        image: `${import.meta.env.BASE_URL}projects/looply/product.png`,
+        image: new URL("../assets/looply/filteredProducts.png", import.meta.url)
+          .href,
         title: "Produktübersicht",
         description:
           "Produkte können durchsucht und anhand verschiedener Kriterien gefiltert werden. Dadurch können Benutzer gezielt nach passenden Secondhand-Artikeln suchen.",
       },
       {
-        image: `${import.meta.env.BASE_URL}projects/looply/dashboard.png`,
+        image: new URL("../assets/looply/seller.png", import.meta.url).href,
         title: "Verkäufer-Dashboard",
         description:
           "Im Dashboard können Verkäufer ihre Produkte und Bestellungen verwalten und erhalten einen Überblick über ihre Aktivitäten.",
       },
     ],
 
-    demo: "https://example.com",
-    github: "https://gitlab.com/example",
+    //demo: "https://example.com",
+    documentation: "https://online-secondhand-7b02fb.pages.ti.bfh.ch/docs/",
   },
 
   ecocharge: {
@@ -159,6 +161,8 @@ const projects: Record<string, Project> = {
     ],
 
     demo: "https://ecocharge.free.nf",
+    documentation:
+      "https://showroom-bcs.digisus-lab.ch/ecocharge-smartes-laden-fur-dein-elektroauto/",
   },
 
   orderly: {
@@ -296,6 +300,8 @@ const project = computed(() => {
               <img
                 :src="screenshot.image"
                 :alt="`${project.title} – ${screenshot.title}`"
+                loading="lazy"
+                decoding="async"
               />
             </div>
 
@@ -485,6 +491,16 @@ const project = computed(() => {
               class="project-button secondary"
             >
               GitLab
+              <span>↗</span>
+            </a>
+            <a
+              v-if="project.documentation"
+              :href="project.documentation"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="project-button secondary"
+            >
+              Dokumentation
               <span>↗</span>
             </a>
           </div>

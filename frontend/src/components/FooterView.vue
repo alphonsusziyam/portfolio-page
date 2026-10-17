@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useTheme } from "../composables/useTheme";
+import { usePwaInstall } from "../composables/usePwaInstall";
 
 declare global {
   interface Window {
@@ -10,6 +11,7 @@ declare global {
 }
 
 const { theme, toggleTheme } = useTheme();
+const { canInstall, promptInstall } = usePwaInstall();
 
 const changeLanguage = (language: string) => {
   const select = document.querySelector(
@@ -67,6 +69,15 @@ onMounted(() => {
 
       <!-- Rechts: Sprache & Design -->
       <div class="footer-controls">
+        <!-- App installieren (nur wenn der Browser es anbietet) -->
+        <template v-if="canInstall">
+          <button class="install-button" type="button" @click="promptInstall">
+            App installieren
+          </button>
+
+          <span class="footer-divider" aria-hidden="true"></span>
+        </template>
+
         <!-- Deutschland -->
         <button
           class="language-button"

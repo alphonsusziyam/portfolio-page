@@ -1,5 +1,19 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
+
+/* Titelbilder der Projekt-Karten */
+
+const covers = {
+  looply: new URL("../assets/looply/thumbnail.png", import.meta.url).href,
+  ecocharge: new URL("../assets/ecocharge/thumbnail.png", import.meta.url).href,
+  orderly: new URL("../assets/orderly/thumbnail.png", import.meta.url).href,
+};
+
+/* Fehlt ein Bild, verschwindet es und die Karte zeigt nur den Verlauf */
+
+function hideBrokenImage(event: Event) {
+  (event.target as HTMLImageElement).style.display = "none";
+}
 </script>
 
 <template>
@@ -103,6 +117,14 @@ import { RouterLink } from "vue-router";
           <RouterLink to="/projects/looply" class="project-card">
             <div class="project-image project-looply">
               <span>01</span>
+
+              <img
+                :src="covers.looply"
+                alt="Vorschau von Looply"
+                loading="lazy"
+                decoding="async"
+                @error="hideBrokenImage"
+              />
             </div>
 
             <div class="project-content">
@@ -133,6 +155,14 @@ import { RouterLink } from "vue-router";
           <RouterLink to="/projects/ecocharge" class="project-card">
             <div class="project-image project-ecocharge">
               <span>02</span>
+
+              <img
+                :src="covers.ecocharge"
+                alt="Vorschau von EcoCharge"
+                loading="lazy"
+                decoding="async"
+                @error="hideBrokenImage"
+              />
             </div>
 
             <div class="project-content">
@@ -162,6 +192,14 @@ import { RouterLink } from "vue-router";
           <RouterLink to="/projects/orderly" class="project-card">
             <div class="project-image project-orderly">
               <span>03</span>
+
+              <img
+                :src="covers.orderly"
+                alt="Vorschau von Orderly"
+                loading="lazy"
+                decoding="async"
+                @error="hideBrokenImage"
+              />
             </div>
 
             <div class="project-content">
@@ -204,7 +242,7 @@ import { RouterLink } from "vue-router";
             mich auf deine Nachricht.
           </p>
 
-          <a href="mailto:deine.email@example.com" class="button primary">
+          <a href="mailto:ziyam2@icloud.com" class="button primary">
             E-Mail schreiben
           </a>
         </div>
