@@ -61,6 +61,7 @@
   --nav-border: rgba(255, 255, 255, 0.06);
 
   --shadow-card: none;
+  --glow: rgba(0, 229, 160, 0.1);
   --shadow-cover: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.45);
 
   --chart-grid: #292929;
@@ -120,6 +121,7 @@
   --shadow-card:
     0 1px 2px rgba(17, 21, 20, 0.04), 0 8px 24px rgba(17, 21, 20, 0.05);
   --shadow-cover: 0 0.75rem 1.75rem rgba(17, 21, 20, 0.18);
+  --glow: rgba(0, 201, 140, 0.16);
 
   --chart-grid: #dde2e4;
   --chart-fill: rgba(0, 122, 88, 0.14);
@@ -387,12 +389,47 @@ html.theme-transition *::after {
 }
 
 .navbar nav a {
-  color: var(--text-muted);
+  position: relative;
 
-  font-size: 0.875rem;
+  color: var(--text-soft);
+
+  font-size: 0.9375rem;
   font-weight: 500;
 
   transition: color 0.2s ease;
+}
+
+/* Unterstreichung für aktive Seite / Hover */
+
+.navbar nav a::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: -0.4375rem;
+
+  height: 2px;
+
+  background: var(--accent);
+
+  transform: scaleX(0);
+  transform-origin: left;
+
+  transition: transform 0.25s ease;
+}
+
+.navbar nav a.router-link-exact-active {
+  color: var(--text);
+}
+
+.navbar nav a.router-link-exact-active::after {
+  transform: scaleX(1);
+}
+
+.navbar nav a.nav-contact::after {
+  display: none;
 }
 
 .nav-contact {
@@ -427,6 +464,22 @@ html.theme-transition *::after {
   height: 2px;
 
   background: var(--text);
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.menu-button[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(0.4375rem) rotate(45deg);
+}
+
+.menu-button[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-button[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-0.4375rem) rotate(-45deg);
 }
 
 /* =========================================================
@@ -435,9 +488,34 @@ html.theme-transition *::after {
 
 /* Hero */
 
+.hero,
+.about-hero,
+.page-hero,
+.project-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Sanfter Akzent-Schein hinter dem Hero */
+
+.hero::before,
+.about-hero::before,
+.page-hero::before,
+.project-hero::before {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+
+  pointer-events: none;
+
+  background: radial-gradient(55% 60% at 88% 18%, var(--glow), transparent 70%);
+}
+
 .hero {
-  min-height: calc(100vh - var(--nav-height));
-  min-height: calc(100svh - var(--nav-height));
+  min-height: min(calc(100vh - var(--nav-height)), 48rem);
+  min-height: min(calc(100svh - var(--nav-height)), 48rem);
 
   display: flex;
   align-items: center;
@@ -475,6 +553,224 @@ html.theme-transition *::after {
 
   gap: 0.875rem;
   margin-top: 2.25rem;
+}
+
+/* Hero mit Projekt-Fenstern */
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.hero-visual {
+  position: relative;
+
+  aspect-ratio: 1 / 0.95;
+}
+
+.hero-window {
+  position: absolute;
+
+  width: 78%;
+  height: auto;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+
+  box-shadow: var(--shadow-cover);
+
+  animation: float 7s ease-in-out infinite alternate;
+}
+
+.hero-window:nth-child(1) {
+  top: 0;
+  left: 0;
+
+  rotate: -4deg;
+}
+
+.hero-window:nth-child(2) {
+  top: 27%;
+  right: 0;
+
+  rotate: 3deg;
+
+  animation-delay: -2.5s;
+}
+
+.hero-window:nth-child(3) {
+  bottom: 0;
+  left: 8%;
+
+  rotate: -1.5deg;
+
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  from {
+    translate: 0 -0.35rem;
+  }
+
+  to {
+    translate: 0 0.35rem;
+  }
+}
+
+@media (min-width: 851px) {
+  .hero h1 {
+    font-size: clamp(2.75rem, 5.4vw, 4.5rem);
+  }
+}
+
+/* Technologien: laufendes Band */
+
+.ticker {
+  overflow: hidden;
+
+  background: var(--surface);
+
+  border-block: 1px solid var(--border);
+
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+
+.ticker-track {
+  display: flex;
+
+  width: max-content;
+
+  animation: marquee 45s linear infinite;
+}
+
+.ticker-group {
+  display: flex;
+  flex-shrink: 0;
+
+  list-style: none;
+}
+
+.ticker-group li {
+  display: flex;
+  align-items: center;
+
+  padding: 1.125rem 0;
+
+  color: var(--text-soft);
+
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.ticker-group li::after {
+  content: "";
+
+  width: 0.375rem;
+  height: 0.375rem;
+
+  margin-inline: 1.5rem;
+
+  border-radius: 50%;
+  background: var(--accent);
+
+  opacity: 0.6;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Sanftes Einblenden beim Scrollen (Direktive v-reveal) */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(1.5rem);
+
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Über mich (Teaser) */
+
+.home-about-card {
+  display: grid;
+  grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+  align-items: center;
+
+  gap: clamp(1.5rem, 4vw, 3rem);
+
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+
+  box-shadow: var(--shadow-card);
+}
+
+.home-about-photo {
+  width: 100%;
+  aspect-ratio: 1;
+
+  object-fit: cover;
+
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+}
+
+.home-about-text h2 {
+  margin: 0.75rem 0 1rem;
+
+  font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+  line-height: 1.15;
+
+  letter-spacing: -0.03em;
+}
+
+.home-about-text > p:not(.eyebrow) {
+  max-width: 36rem;
+
+  color: var(--text-muted);
+  line-height: 1.75;
+}
+
+.home-about-text .button {
+  margin-top: 1.5rem;
 }
 
 /* Was ich mache */
@@ -558,6 +854,8 @@ html.theme-transition *::after {
 }
 
 .project-card {
+  position: relative;
+
   display: flex;
   flex-direction: column;
 
@@ -587,6 +885,9 @@ html.theme-transition *::after {
   justify-content: center;
 
   padding: 2rem 1.25rem 1.25rem;
+
+  /* Fallback für neue Projekte ohne eigene .project-<id>-Farbe */
+  background: var(--surface-light);
 
   border-bottom: 1px solid var(--border);
 }
@@ -703,11 +1004,60 @@ html.theme-transition *::after {
   transition: gap 0.2s ease;
 }
 
-/* Link am Kartenende ausrichten, damit alle Karten gleich hoch enden */
+/* Der Titel-Link deckt die ganze Karte ab ("Stretched Link"),
+   so bleibt die Karte klickbar, obwohl der Demo-Link darin ein eigener Link ist */
 
-.project-card .project-link {
+.project-card-link {
+  color: inherit;
+}
+
+.project-card-link::after {
+  content: "";
+
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+}
+
+.project-card-link:focus-visible {
+  outline: none;
+}
+
+.project-card-link:focus-visible::after {
+  outline: 0.1875rem solid var(--accent-ink);
+  outline-offset: -0.1875rem;
+
+  border-radius: var(--radius);
+}
+
+/* Fusszeile der Karte: alle Karten enden gleich hoch */
+
+.project-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 0.5rem 1rem;
+
   margin-top: auto;
   padding-top: 1.5rem;
+}
+
+.project-footer .project-link {
+  margin-top: 0;
+
+  white-space: nowrap;
+}
+
+.project-demo {
+  position: relative;
+  z-index: 1;
+
+  color: var(--accent-ink);
+
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 /* Kontakt */
@@ -1184,8 +1534,10 @@ html.theme-transition *::after {
   flex-direction: column;
   gap: 1.25rem;
 
+  --timeline-gap: 1.75rem;
+
   margin-left: 0.375rem;
-  padding-left: 1.75rem;
+  padding-left: var(--timeline-gap);
 
   border-left: 1px solid var(--border-strong);
 
@@ -1211,7 +1563,7 @@ html.theme-transition *::after {
   position: absolute;
 
   top: 1.75rem;
-  left: calc(-1.75rem - 0.3125rem - 0.5px);
+  left: calc(-1 * var(--timeline-gap) - 0.3125rem - 0.5px);
 
   width: 0.625rem;
   height: 0.625rem;
@@ -2562,6 +2914,10 @@ body {
     color: var(--text);
   }
 
+  .navbar nav a:hover::after {
+    transform: scaleX(1);
+  }
+
   .nav-contact:hover {
     border-color: var(--accent-ink);
   }
@@ -2589,6 +2945,18 @@ body {
 
   .project-link:hover {
     gap: 0.75rem;
+  }
+
+  .project-card:hover .project-card-link {
+    color: var(--accent-ink);
+  }
+
+  .project-demo:hover {
+    text-decoration: underline;
+  }
+
+  .ticker:hover .ticker-track {
+    animation-play-state: paused;
   }
 
   .project-card:hover .project-image img {
@@ -2672,6 +3040,10 @@ body {
   .install-button {
     min-height: 2.75rem;
   }
+
+  .filter-chip {
+    min-height: 2.5rem;
+  }
 }
 
 /* =========================================================
@@ -2683,6 +3055,43 @@ body {
 @media (max-width: 1100px) {
   .projects-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Was ich mache: zwei Karten nebeneinander */
+
+  .focus-grid {
+    gap: 1rem;
+
+    border: none;
+  }
+
+  .focus-item,
+  .focus-item + .focus-item {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+
+    padding: 1.5rem;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow-card);
+  }
+
+  .focus-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    justify-self: start;
+
+    width: 2rem;
+    height: 2rem;
+
+    border: 1px solid var(--border-strong);
+    border-radius: 50%;
   }
 
   .skills-list {
@@ -2699,9 +3108,43 @@ body {
   }
 }
 
+/* ---------- Nur Tablet (701–1100px): letzte Projektkarte quer ---------- */
+
+@media (min-width: 701px) and (max-width: 1100px) {
+  .project-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+
+    flex-direction: row;
+  }
+
+  .project-card:last-child:nth-child(odd) .project-image {
+    flex: 0 0 42%;
+
+    height: auto;
+    min-height: 14rem;
+
+    border-right: 1px solid var(--border);
+    border-bottom: none;
+  }
+
+  .project-card:last-child:nth-child(odd) .project-content {
+    flex: 1;
+  }
+}
+
 /* ---------- Tablet hoch ≤ 850px ---------- */
 
 @media (max-width: 850px) {
+  /* Startseite */
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-visual {
+    display: none;
+  }
+
   /* Projektseite: Screenshots untereinander */
 
   .screenshot-item,
@@ -2712,6 +3155,10 @@ body {
 
   .screenshot-item:nth-child(even) .screenshot-image {
     order: 0;
+  }
+
+  .screenshot-image {
+    max-width: 46rem;
   }
 
   /* Über mich */
@@ -2737,21 +3184,6 @@ body {
 
   .about-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* Startseite */
-
-  .focus-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .focus-item {
-    padding-inline: 0;
-  }
-
-  .focus-item + .focus-item {
-    border-left: none;
-    border-top: 1px solid var(--border);
   }
 
   /* Skills */
@@ -2807,9 +3239,10 @@ body {
 @media (max-width: 700px) {
   :root {
     --nav-height: 4rem;
+    --section-space: 3.5rem;
   }
 
-  /* Navigation */
+  /* Navigation: Vollbild-Menü mit grossen, nummerierten Links */
 
   .menu-button {
     display: flex;
@@ -2823,8 +3256,10 @@ body {
 
     width: 100%;
 
-    max-height: calc(100vh - var(--nav-height));
-    max-height: calc(100svh - var(--nav-height));
+    height: calc(100vh - var(--nav-height));
+    height: calc(100svh - var(--nav-height));
+    height: calc(100dvh - var(--nav-height));
+
     overflow-y: auto;
 
     display: none;
@@ -2834,25 +3269,76 @@ body {
 
     gap: 0;
 
-    padding: 0.625rem var(--gutter) 1.25rem;
+    padding: 1rem var(--gutter) calc(1.5rem + env(safe-area-inset-bottom, 0px));
 
     background: var(--nav-bg-solid);
 
-    border-bottom: 1px solid var(--border);
+    counter-reset: nav;
   }
 
   .navbar nav.open {
     display: flex;
+
+    animation: rise 0.3s ease-out both;
   }
 
   .navbar nav a {
-    padding: 0.875rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+
+    padding: 1.125rem 0;
+
+    border-bottom: 1px solid var(--border);
+
+    color: var(--text);
+
+    font-size: 1.625rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
 
-  .navbar .nav-contact {
-    padding: 0.875rem 0;
+  .navbar nav a::before {
+    counter-increment: nav;
+    content: "0" counter(nav);
+
+    color: var(--accent-ink);
+
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+
+  .navbar nav a::after {
+    display: none;
+  }
+
+  .navbar nav a.router-link-exact-active {
+    color: var(--accent-ink);
+  }
+
+  /* Kontakt als grosser Button am unteren Rand */
+
+  .navbar nav a.nav-contact {
+    justify-content: center;
+
+    margin-top: auto;
+    padding: 1rem;
 
     border: none;
+    border-radius: 0.625rem;
+
+    background: var(--accent);
+    color: var(--on-accent);
+
+    font-size: 1.0625rem;
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  .navbar nav a.nav-contact::before {
+    content: none;
   }
 
   /* Buttons */
@@ -2872,7 +3358,7 @@ body {
   .hero {
     min-height: auto;
 
-    padding-block: 3.5rem 5rem;
+    padding-block: 2.5rem 3rem;
   }
 
   .hero h1 {
@@ -2883,7 +3369,8 @@ body {
 
   .hero-text,
   .page-intro,
-  .project-intro {
+  .project-intro,
+  .about-lead {
     font-size: 1rem;
   }
 
@@ -2896,11 +3383,11 @@ body {
   /* Startseite */
 
   .focus-item {
-    grid-template-columns: 2.5rem minmax(0, 1fr);
+    grid-template-columns: 1fr;
 
-    gap: 1.125rem;
+    gap: 0.5rem;
 
-    padding-block: 2.1875rem;
+    padding-block: 1.75rem;
   }
 
   .focus-item h3 {
@@ -2947,6 +3434,55 @@ body {
 
   .portrait-frame::before {
     transform: translate(0.5rem, 0.5rem);
+  }
+
+  /* Kleines Foto, damit die Überschrift im ersten Bildschirm sichtbar ist */
+
+  .portrait {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .portrait-frame {
+    width: 13.5rem;
+  }
+
+  .status-card {
+    position: static;
+
+    max-width: 100%;
+    margin-top: 1.25rem;
+  }
+
+  .about-card {
+    padding: 1.25rem;
+  }
+
+  .about-card-number {
+    margin-bottom: 0.5rem;
+  }
+
+  .about-card h3 {
+    font-size: 1.125rem;
+  }
+
+  .timeline {
+    --timeline-gap: 1.25rem;
+  }
+
+  .timeline-kind {
+    font-size: 0.6875rem;
+  }
+
+  .tags span,
+  .focus-tags span,
+  .repo-meta,
+  .status-label {
+    font-size: 0.75rem;
   }
 
   /* Skills */
@@ -3006,6 +3542,34 @@ body {
     grid-template-columns: 1fr;
   }
 
+  /* Funktionen als kompakte Liste statt 160px hohe Karten */
+
+  .feature-card {
+    min-height: auto;
+
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-start;
+
+    gap: 1rem;
+
+    padding: 1rem 1.25rem;
+  }
+
+  .feature-card p {
+    margin-top: 0;
+
+    font-size: 1rem;
+  }
+
+  .project-section {
+    padding-bottom: 3rem;
+  }
+
+  .back-link {
+    margin-bottom: 2.5rem;
+  }
+
   .links {
     width: 100%;
 
@@ -3055,6 +3619,187 @@ body {
   }
 }
 
+/* ---------- Smartphone: Design-Feinschliff ≤ 700px ---------- */
+
+@media (max-width: 700px) {
+  /* Hero: grössere Schrift (Wort darf bei "Software-entwicklung" umbrechen) */
+
+  .hero h1 {
+    font-size: clamp(2rem, 10vw, 3.5rem);
+    line-height: 1.04;
+
+    letter-spacing: -0.04em;
+  }
+
+  /* "& Systemtechnik" bleibt zusammen (kein einzelnes "&" in der Zeile) */
+
+  .hero h1 span {
+    white-space: nowrap;
+  }
+
+  .hero-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 0.75rem;
+  }
+
+  .hero-buttons .button {
+    padding-inline: 0.75rem;
+  }
+
+  /* Was ich mache: Karten statt Linien */
+
+  .focus-grid {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.875rem;
+
+    border: none;
+  }
+
+  .focus-item,
+  .focus-item + .focus-item {
+    padding: 1.25rem;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow-card);
+  }
+
+  .focus-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    justify-self: start;
+
+    width: 2rem;
+    height: 2rem;
+
+    border: 1px solid var(--border-strong);
+    border-radius: 50%;
+  }
+
+  /* Projekte: wischbares Karussell mit Vorschau auf die nächste Karte */
+
+  .projects-grid {
+    display: flex;
+
+    gap: 1rem;
+
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 0.25rem var(--gutter) 1rem;
+
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .projects-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .project-card {
+    flex: 0 0 min(84%, 22rem);
+
+    scroll-snap-align: start;
+  }
+
+  /* Über mich: rundes Profilfoto mit Ring, Status als Pille */
+
+  .portrait {
+    padding-top: 0.5rem;
+  }
+
+  .portrait-frame {
+    width: 10.5rem;
+
+    border-radius: 50%;
+  }
+
+  .portrait-frame::before {
+    inset: -0.5rem;
+
+    transform: none;
+
+    border-radius: 50%;
+  }
+
+  .portrait-frame img {
+    border-radius: 50%;
+  }
+
+  .status-card {
+    margin-top: 1.5rem;
+    padding: 0.625rem 1.25rem 0.625rem 1rem;
+
+    border-radius: 999px;
+  }
+
+  .about-cards {
+    gap: 0.75rem;
+
+    overflow: visible;
+
+    background: transparent;
+
+    border: none;
+    border-radius: 0;
+  }
+
+  .about-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  /* Startseite: Über-mich-Teaser */
+
+  .home-about-card {
+    grid-template-columns: 1fr;
+  }
+
+  .home-about-photo {
+    justify-self: center;
+
+    width: 8.5rem;
+
+    border-radius: 50%;
+  }
+
+  .ticker-group li {
+    padding: 0.875rem 0;
+  }
+
+  /* Skills: Balken in Karten */
+
+  .skills-list {
+    gap: 1.5rem;
+
+    padding: 1.25rem;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+}
+
+@media (max-width: 359px) {
+  .hero-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ---------- kleines Smartphone ≤ 400px ---------- */
 
 @media (max-width: 400px) {
@@ -3070,10 +3815,6 @@ body {
 
   .contact-box {
     padding-inline: 1rem;
-  }
-
-  .feature-card {
-    padding: 1.5rem 1.25rem;
   }
 }
 

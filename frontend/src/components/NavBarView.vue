@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeUnmount, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
 
 const menuOpen = ref(false);
@@ -7,6 +7,40 @@ const menuOpen = ref(false);
 function closeMenu() {
   menuOpen.value = false;
 }
+
+/* Vollbild-Menü: Seite dahinter nicht scrollen lassen */
+
+watch(menuOpen, (open) => {
+  document.body.style.overflow = open ? "hidden" : "";
+});
+
+/* Escape schliesst das Menü */
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape") {
+    closeMenu();
+  }
+}
+
+/* Wird das Fenster breit (Tablet quer, Desktop), Menü zurücksetzen */
+
+const desktopQuery = window.matchMedia("(min-width: 701px)");
+
+function onBreakpointChange(event: MediaQueryListEvent) {
+  if (event.matches) {
+    closeMenu();
+  }
+}
+
+window.addEventListener("keydown", onKeydown);
+desktopQuery.addEventListener("change", onBreakpointChange);
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", onKeydown);
+  desktopQuery.removeEventListener("change", onBreakpointChange);
+
+  document.body.style.overflow = "";
+});
 </script>
 
 <template>
@@ -18,7 +52,9 @@ function closeMenu() {
 
       <button
         class="menu-button"
-        aria-label="Menü öffnen"
+        :aria-label="menuOpen ? 'Menü schliessen' : 'Menü öffnen'"
+        :aria-expanded="menuOpen"
+        aria-controls="main-menu"
         @click="menuOpen = !menuOpen"
       >
         <span></span>
@@ -26,14 +62,32 @@ function closeMenu() {
         <span></span>
       </button>
 
-      <nav :class="{ open: menuOpen }">
-        <RouterLink to="/about" @click="closeMenu"> Über mich </RouterLink>
+      <nav id="main-menu" :class="{ open: menuOpen }">
+        <RouterLink to="/about" @click="closeMenu">Über mich</RouterLink>
 
-        <RouterLink to="/skills" @click="closeMenu"> Skills </RouterLink>
+        <RouterLink to="/skills" @click="closeMenu">Skills</RouterLink>
 
-        <RouterLink to="/#projects" @click="closeMenu"> Projekte </RouterLink>
+        <!-- Anker auf der Startseite: kein "aktiv"-Zustand -->
+        <RouterLink
+          to="/#projects"
+          active-class=""
+          exact-active-class=""
+          @click="closeMenu"
+        >
+          Projekte
+        </RouterLink>
 
-        <RouterLink to="/#contact" class="nav-contact" @click="closeMenu">
+        <RouterLink to="/qualifications" @click="closeMenu">
+          Zertifikate
+        </RouterLink>
+
+        <RouterLink
+          to="/#contact"
+          class="nav-contact"
+          active-class=""
+          exact-active-class=""
+          @click="closeMenu"
+        >
           Kontakt
         </RouterLink>
       </nav>

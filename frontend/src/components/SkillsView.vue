@@ -36,18 +36,18 @@ const itSkills = [
   { name: "HTML / CSS", level: 90 },
   { name: "JavaScript / TypeScript", level: 85 },
   { name: "Vue.js", level: 80 },
-  { name: "SQL", level: 80 },
+  { name: "SQL", level: 90 },
   { name: "Git", level: 80 },
-  { name: "PHP", level: 75 },
+  { name: "PHP", level: 90 },
   { name: "Systemtechnik", level: 75 },
-  { name: "Python", level: 65 },
+  { name: "Python", level: 75 },
 ];
 
 const languages = [
   { name: "Deutsch", level: 95 },
   { name: "Englisch", level: 85 },
   { name: "Französisch", level: 70 },
-  { name: "Tamil", level: 100 },
+  { name: "Tamil", level: 70 },
 ];
 
 /* =========================================
@@ -81,7 +81,13 @@ function labelFontSize(): number {
     getComputedStyle(document.documentElement).fontSize,
   );
 
-  return (rootSize || 16) * 0.75;
+  return (rootSize || 16) * (isCompact() ? 0.6875 : 0.75);
+}
+
+/* Schmale Handys: kleinere Beschriftung, damit das Radar mehr Platz hat */
+
+function isCompact(): boolean {
+  return window.matchMedia("(max-width: 450px)").matches;
 }
 
 /* =========================================
@@ -185,7 +191,7 @@ function createChart(animate: boolean) {
               weight: 500,
             },
 
-            padding: 12,
+            padding: isCompact() ? 6 : 12,
           },
         },
       },

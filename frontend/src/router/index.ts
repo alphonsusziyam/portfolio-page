@@ -4,6 +4,7 @@ import HomeView from "../components/HomeView.vue";
 import AboutView from "../components/AboutView.vue";
 import SkillsView from "../components/SkillsView.vue";
 import ProjectView from "../components/ProjectView.vue";
+import QualificationsView from "../components/QualificationsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,6 +37,11 @@ const router = createRouter({
       path: "/projects/:id",
       name: "project",
       component: ProjectView,
+    },
+    {
+      path: "/qualifications",
+      name: "qualifications",
+      component: QualificationsView,
     },
   ],
 });
