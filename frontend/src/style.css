@@ -24,6 +24,10 @@
          ≤  400px  kleines Smartphone
          flaches Querformat (Smartphone quer)
    16  Fernseher & grosse Displays (≥ 1600px)
+   16b Qualifikationen (Zertifikate-Seite)
+   17  Mobile App (iPhone-Stil, ≤ 700px)
+   17b Mobile: weniger Inhalt
+   17c Mobile: Qualifikationen
 
    Alle Grössen sind in rem angegeben. Ab 1600px Breite wächst
    die Basisschrift mit (siehe Abschnitt 2 / 16), dadurch
@@ -62,6 +66,7 @@
 
   --shadow-card: none;
   --glow: rgba(0, 229, 160, 0.1);
+  --warning: #d6a54d;
   --shadow-cover: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.45);
 
   --chart-grid: #292929;
@@ -122,6 +127,7 @@
     0 1px 2px rgba(17, 21, 20, 0.04), 0 8px 24px rgba(17, 21, 20, 0.05);
   --shadow-cover: 0 0.75rem 1.75rem rgba(17, 21, 20, 0.18);
   --glow: rgba(0, 201, 140, 0.16);
+  --warning: #8f6400;
 
   --chart-grid: #dde2e4;
   --chart-fill: rgba(0, 122, 88, 0.14);
@@ -439,47 +445,44 @@ html.theme-transition *::after {
   border-radius: 0.375rem;
 }
 
-/* Hamburger-Button (nur Smartphone) */
+/* Hell/Dunkel-Knopf in der oberen Leiste (nur Handy) */
 
-.menu-button {
+.nav-theme {
   display: none;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.3125rem;
 
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
 
-  background: transparent;
+  padding: 0;
+
   border: none;
+  border-radius: 50%;
+
+  background: var(--surface);
+  color: var(--text);
 
   cursor: pointer;
 }
 
-.menu-button span {
+.nav-theme svg {
   display: block;
 
-  width: 1.5rem;
-  height: 2px;
+  width: 1.125rem;
+  height: 1.125rem;
 
-  background: var(--text);
-
-  transition:
-    transform 0.2s ease,
-    opacity 0.2s ease;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.menu-button[aria-expanded="true"] span:nth-child(1) {
-  transform: translateY(0.4375rem) rotate(45deg);
-}
+/* Tab-Leiste unten (nur Handy, siehe Abschnitt 17) */
 
-.menu-button[aria-expanded="true"] span:nth-child(2) {
-  opacity: 0;
-}
-
-.menu-button[aria-expanded="true"] span:nth-child(3) {
-  transform: translateY(-0.4375rem) rotate(-45deg);
+.tabbar {
+  display: none;
 }
 
 /* =========================================================
@@ -556,6 +559,10 @@ html.theme-transition *::after {
 }
 
 /* Hero mit Projekt-Fenstern */
+
+.hero-avatar {
+  display: none;
+}
 
 .hero-grid {
   display: grid;
@@ -3242,105 +3249,6 @@ body {
     --section-space: 3.5rem;
   }
 
-  /* Navigation: Vollbild-Menü mit grossen, nummerierten Links */
-
-  .menu-button {
-    display: flex;
-  }
-
-  .navbar nav {
-    position: absolute;
-
-    top: var(--nav-height);
-    left: 0;
-
-    width: 100%;
-
-    height: calc(100vh - var(--nav-height));
-    height: calc(100svh - var(--nav-height));
-    height: calc(100dvh - var(--nav-height));
-
-    overflow-y: auto;
-
-    display: none;
-
-    flex-direction: column;
-    align-items: stretch;
-
-    gap: 0;
-
-    padding: 1rem var(--gutter) calc(1.5rem + env(safe-area-inset-bottom, 0px));
-
-    background: var(--nav-bg-solid);
-
-    counter-reset: nav;
-  }
-
-  .navbar nav.open {
-    display: flex;
-
-    animation: rise 0.3s ease-out both;
-  }
-
-  .navbar nav a {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-
-    padding: 1.125rem 0;
-
-    border-bottom: 1px solid var(--border);
-
-    color: var(--text);
-
-    font-size: 1.625rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-
-  .navbar nav a::before {
-    counter-increment: nav;
-    content: "0" counter(nav);
-
-    color: var(--accent-ink);
-
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-  }
-
-  .navbar nav a::after {
-    display: none;
-  }
-
-  .navbar nav a.router-link-exact-active {
-    color: var(--accent-ink);
-  }
-
-  /* Kontakt als grosser Button am unteren Rand */
-
-  .navbar nav a.nav-contact {
-    justify-content: center;
-
-    margin-top: auto;
-    padding: 1rem;
-
-    border: none;
-    border-radius: 0.625rem;
-
-    background: var(--accent);
-    color: var(--on-accent);
-
-    font-size: 1.0625rem;
-    letter-spacing: 0;
-    text-align: center;
-  }
-
-  .navbar nav a.nav-contact::before {
-    content: none;
-  }
-
   /* Buttons */
 
   .hero-buttons {
@@ -3848,5 +3756,1639 @@ body {
 @media (min-width: 1600px) {
   :root {
     --gutter: 2.5rem;
+  }
+}
+
+/* =========================================================
+   16b  QUALIFIKATIONEN (Zertifikate-Seite)
+
+   Früher <style scoped> in QualificationsView.vue. Drei Klassen
+   gibt es auch global (.eyebrow, .skills-list, .status-dot), sie sind
+   deshalb mit .qualifications-page abgesichert. Handy-Ansicht: siehe 17c.
+========================================================= */
+
+.qualifications-page {
+  width: 100%;
+  max-width: 75rem;
+  margin: 0 auto;
+  padding: 6.25rem 2rem 6rem;
+  color: var(--text);
+}
+
+.qualifications-header {
+  margin-bottom: 2.75rem;
+}
+
+.qualifications-page .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0 0 1.25rem;
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.eyebrow-line {
+  display: inline-block;
+  width: 1.5rem;
+  height: 2px;
+  background: var(--accent);
+}
+
+.qualifications-header h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 5vw, 3.625rem);
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+}
+
+.qualifications-header h1 span {
+  color: var(--accent-ink);
+}
+
+.page-description {
+  max-width: 36.25rem;
+  margin: 1.125rem 0 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  padding: 0 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  transition: border-color 0.2s ease;
+}
+
+.search-field:focus-within {
+  border-color: var(--accent);
+}
+
+.search-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  stroke: var(--text-muted);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.search-field input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.875rem 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.search-field input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.clear-search {
+  display: grid;
+  width: 1.875rem;
+  height: 1.875rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.clear-search:hover {
+  color: var(--text);
+  background: var(--border);
+}
+
+.toolbar-controls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.select-wrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.select-wrapper select {
+  width: 100%;
+  min-height: 2.875rem;
+  padding: 0 2.25rem 0 0.875rem;
+  appearance: none;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.select-wrapper select:focus-visible {
+  border-color: var(--accent);
+}
+
+.select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 0.875rem;
+  color: var(--text-muted);
+  pointer-events: none;
+  transform: translateY(-60%);
+}
+
+.results-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0 1.125rem;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.results-info strong {
+  color: var(--text);
+}
+
+.reset-button {
+  padding: 0.375rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.qualification-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.qualification-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--surface);
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.qualification-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  transform: translateY(-0.1875rem);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.375rem;
+}
+
+.issuer-logo {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--background);
+  color: var(--accent-ink);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.issuer-logo img {
+  width: 100%;
+  height: 100%;
+  padding: 0.3125rem;
+  object-fit: contain;
+}
+
+.category-badge {
+  max-width: 65%;
+  padding: 0.375rem 0.5625rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4375rem;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.card-body {
+  flex: 1;
+}
+
+.issuer-name {
+  margin: 0 0 0.5rem;
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+}
+
+.card-body h2 {
+  margin: 0;
+  font-size: 1.3125rem;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.qualification-level {
+  margin: 0.5rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.qualification-description {
+  margin: 1rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.qualifications-page .skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4375rem;
+  margin-top: 1.125rem;
+}
+
+.skill-tag {
+  padding: 0.3125rem 0.5625rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+}
+
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.date-info {
+  display: flex;
+  align-items: center;
+  gap: 0.4375rem;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+}
+
+.date-info svg {
+  width: 0.9375rem;
+  height: 0.9375rem;
+  flex-shrink: 0;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.verification-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+}
+
+.qualifications-page .status-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-verified {
+  color: var(--accent-ink);
+}
+
+.status-document-provided {
+  color: var(--warning);
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.125rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.grade,
+.credential-id {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem;
+  margin: 0;
+}
+
+.grade span,
+.credential-id span {
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+}
+
+.grade strong,
+.credential-id strong {
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.card-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem 1rem;
+  margin-top: 0.25rem;
+}
+
+.card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  color: var(--accent-ink);
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.card-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+
+.certificate-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.secondary-link {
+  color: var(--text-muted);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 1.25rem;
+  border: 1px dashed var(--border);
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.empty-icon {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  border-radius: 1rem;
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
+.empty-icon svg {
+  width: 1.625rem;
+  height: 1.625rem;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.empty-state h2 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1.1875rem;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.reset-empty-button {
+  margin-top: 1.25rem;
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5625rem;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.reset-empty-button:hover {
+  border-color: var(--accent);
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.375rem;
+  border-top: 1px solid var(--border);
+}
+
+.pagination-summary {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.page-number,
+.page-arrow {
+  display: grid;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 0.5625rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.page-number:hover,
+.page-arrow:not(:disabled):hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.page-number.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+}
+
+.page-arrow {
+  font-size: 1.375rem;
+}
+
+.page-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Zertifikat-Popup */
+
+.certificate-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgb(0 0 0 / 78%);
+  backdrop-filter: blur(0.5rem);
+}
+
+.certificate-modal-content {
+  display: flex;
+  flex-direction: column;
+  width: min(56.25rem, 100%);
+  max-height: 90vh;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 1.125rem;
+  background: var(--background);
+  box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 35%);
+}
+
+.certificate-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.certificate-modal-header h2 {
+  margin: 0.25rem 0 0;
+  color: var(--text);
+  font-size: 1.125rem;
+}
+
+.modal-eyebrow {
+  margin: 0;
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+}
+
+.modal-close {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.75rem;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.certificate-image-container {
+  display: flex;
+  justify-content: center;
+  min-height: 0;
+  padding: 1.5rem;
+  overflow: auto;
+  background: rgb(0 0 0 / 12%);
+}
+
+.certificate-preview {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 62vh;
+  object-fit: contain;
+  border-radius: 0.25rem;
+}
+
+.certificate-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.modal-open-link {
+  color: var(--accent-ink);
+  font-size: 0.8125rem;
+  text-decoration: none;
+}
+
+.modal-open-link:hover {
+  text-decoration: underline;
+}
+
+.modal-done {
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 0.5625rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 56.25rem) {
+  .toolbar {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .search-field {
+    flex: 1;
+  }
+
+  .toolbar-controls {
+    flex-shrink: 0;
+  }
+
+  .select-wrapper {
+    flex: initial;
+    width: 11.875rem;
+  }
+
+  .sort-select {
+    width: 10.3125rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qualification-card,
+  .page-number,
+  .page-arrow {
+    transition: none;
+  }
+
+  .qualification-card:hover {
+    transform: none;
+  }
+}
+
+/* Namenskonflikte mit den globalen Klassen entschärfen */
+
+.qualifications-page .skills-list {
+  max-width: none;
+}
+
+.qualifications-page .status-dot {
+  position: static;
+}
+
+.qualifications-page .status-dot::after {
+  content: none;
+}
+
+/* =========================================================
+   17  MOBILE APP (iPhone-Stil, ≤ 700px)
+
+   Ziel: iPhone 14 Pro (393 × 852). Auf dem Handy sieht die Seite
+   bewusst anders aus als auf dem Desktop: obere Leiste, Tab-Leiste
+   unten, gruppierte Karten, iOS-Schriftgrössen und Tipp-Effekte.
+   Dieser Abschnitt steht ganz am Ende und überschreibt die
+   früheren Handy-Regeln. Sicherer Bereich (Notch, Home-Indikator)
+   kommt über env(safe-area-inset-*), dafür braucht index.html
+   viewport-fit=cover (siehe README).
+========================================================= */
+
+@media (max-width: 700px) {
+  /* ---------- Farben und Masse (iOS: reines Schwarz / gruppiertes Grau) ---------- */
+
+  :root {
+    --nav-height: calc(3rem + env(safe-area-inset-top, 0px));
+    --tabbar-height: 3.75rem;
+    --section-space: 2.5rem;
+    --gutter: 1.25rem;
+    --radius: 1.25rem;
+
+    --font-sans:
+      -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui,
+      sans-serif;
+
+    --background: #000000;
+    --surface: #1c1c1e;
+    --surface-light: #2c2c2e;
+    --border: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.2);
+
+    --text: #ffffff;
+    --text-soft: rgba(235, 235, 245, 0.82);
+    --text-muted: rgba(235, 235, 245, 0.6);
+
+    --track: #3a3a3c;
+    --nav-bg: rgba(0, 0, 0, 0.72);
+    --nav-bg-solid: #000000;
+    --accent-tint: rgba(0, 229, 160, 0.16);
+    --glow: rgba(0, 229, 160, 0.14);
+  }
+
+  :root[data-theme="light"] {
+    --background: #f2f2f7;
+    --surface: #ffffff;
+    --surface-light: #f2f2f7;
+    --border: rgba(60, 60, 67, 0.14);
+    --border-strong: rgba(60, 60, 67, 0.26);
+
+    --text: #000000;
+    --text-soft: rgba(60, 60, 67, 0.85);
+    --text-muted: rgba(60, 60, 67, 0.65);
+
+    --track: #e5e5ea;
+    --nav-bg: rgba(249, 249, 249, 0.8);
+    --nav-bg-solid: #f9f9f9;
+    --accent-tint: rgba(0, 140, 98, 0.12);
+    --glow: rgba(0, 201, 140, 0.18);
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    padding-bottom: calc(
+      var(--tabbar-height) + env(safe-area-inset-bottom, 0px)
+    );
+
+    font-size: 1.0625rem;
+    line-height: 1.45;
+  }
+
+  /* ---------- Obere Leiste ---------- */
+
+  .navbar {
+    padding-top: env(safe-area-inset-top, 0px);
+
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+
+    border-bottom: 0.5px solid var(--border-strong);
+  }
+
+  .nav-container {
+    height: 3rem;
+  }
+
+  .logo {
+    font-size: 1.0625rem;
+  }
+
+  .navbar nav {
+    display: none;
+  }
+
+  .nav-theme {
+    display: flex;
+  }
+
+  /* ---------- Tab-Leiste unten ---------- */
+
+  .tabbar {
+    position: fixed;
+    z-index: 120;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+
+    padding: 0.375rem 0.25rem calc(0.375rem + env(safe-area-inset-bottom, 0px));
+
+    background: var(--nav-bg);
+
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+
+    border-top: 0.5px solid var(--border-strong);
+  }
+
+  .tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.1875rem;
+
+    min-height: 3rem;
+
+    color: var(--text-muted);
+
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+
+    transition:
+      color 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .tab svg {
+    width: 1.5rem;
+    height: 1.5rem;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .tab.active {
+    color: var(--accent-ink);
+  }
+
+  .tab.active svg {
+    stroke-width: 2.1;
+  }
+
+  .tab:active {
+    transform: scale(0.92);
+  }
+
+  /* ---------- Schrift: iOS-Skala ---------- */
+
+  .eyebrow,
+  .section-label,
+  .hero-label {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .section-heading {
+    margin-bottom: 1.25rem;
+  }
+
+  .section-heading h2 {
+    margin-top: 0.25rem;
+
+    font-size: 1.75rem;
+    line-height: 1.15;
+
+    letter-spacing: -0.02em;
+  }
+
+  /* ---------- Buttons ---------- */
+
+  .button,
+  .project-button {
+    min-height: 3.125rem;
+
+    padding-inline: 1rem;
+
+    border-radius: 0.875rem;
+
+    font-size: 1.0625rem;
+    font-weight: 600;
+
+    transition:
+      transform 0.12s ease,
+      opacity 0.12s ease;
+  }
+
+  .button.secondary,
+  .project-button.secondary {
+    background: var(--accent-tint);
+    border-color: transparent;
+    color: var(--accent-ink);
+  }
+
+  .button:active,
+  .project-button:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+
+  /* ---------- Karten: einheitlicher Radius, Tipp-Effekt ---------- */
+
+  .project-card,
+  .focus-item,
+  .focus-item + .focus-item,
+  .about-card,
+  .timeline-item,
+  .panel,
+  .contact-box,
+  .home-about-card,
+  .skill-note,
+  .skills-list,
+  .repo-card,
+  .pwa-toast,
+  .stats-grid > div {
+    border-radius: var(--radius);
+  }
+
+  .project-card:active,
+  .about-card:active,
+  .repo-card:active {
+    transform: scale(0.985);
+  }
+
+  /* ---------- Startseite ---------- */
+
+  .hero {
+    min-height: auto;
+
+    padding-block: 1.25rem 1.5rem;
+  }
+
+  .hero-avatar {
+    display: block;
+
+    width: 4rem;
+    height: 4rem;
+
+    margin-bottom: 1rem;
+
+    object-fit: cover;
+
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+  }
+
+  .hero-label {
+    margin-bottom: 0.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.75rem, 9.6vw, 2.75rem);
+  }
+
+  .hero-text {
+    margin-top: 1rem;
+
+    font-size: 1.0625rem;
+  }
+
+  .hero-buttons {
+    grid-template-columns: 1fr;
+
+    margin-top: 1.5rem;
+  }
+
+  .ticker {
+    margin-block: 0.5rem;
+
+    background: transparent;
+
+    border: none;
+  }
+
+  /* Zahlen als Widgets */
+
+  .about-stats {
+    border: none;
+  }
+
+  .stats-grid {
+    gap: 0.75rem;
+
+    padding-bottom: 0.5rem;
+  }
+
+  .stats-grid > div,
+  .stats-grid > div + div,
+  .stats-grid > div:first-child,
+  .stats-grid > div:nth-child(odd),
+  .stats-grid > div:nth-child(n + 3) {
+    padding: 1rem 1.125rem;
+
+    background: var(--surface);
+
+    border: none;
+  }
+
+  .stats-grid dt {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+  }
+
+  /* Projekte wie App-Store-Karten */
+
+  .projects {
+    border-top: none;
+  }
+
+  .project-card {
+    flex: 0 0 min(86%, 22rem);
+
+    border: none;
+    border-radius: 1.375rem;
+  }
+
+  .project-image {
+    height: clamp(11rem, 52vw, 14rem);
+  }
+
+  .project-content > p:not(.project-type) {
+    display: -webkit-box;
+
+    overflow: hidden;
+
+    font-size: 0.9375rem;
+
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  .what-i-do {
+    padding-block: 1.5rem;
+  }
+
+  .contact-box {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .contact-box h2 {
+    font-size: 1.875rem;
+  }
+
+  /* ---------- Seitenköpfe (grosser Titel) ---------- */
+
+  .page-hero {
+    padding: 1.25rem 0 0.75rem;
+  }
+
+  .page-hero h1 {
+    margin: 0.5rem 0;
+
+    font-size: 2.125rem;
+    line-height: 1.1;
+
+    letter-spacing: -0.02em;
+  }
+
+  .page-intro {
+    margin-top: 0.75rem;
+
+    font-size: 1rem;
+  }
+
+  .about-hero {
+    padding: 1rem 0 1.5rem;
+  }
+
+  /* ---------- Skills ---------- */
+
+  .skills-page {
+    padding-bottom: 1rem;
+  }
+
+  .skills-section {
+    padding-block: 1.25rem;
+
+    border-top: none;
+  }
+
+  /* ---------- Projektseite ---------- */
+
+  .project-hero {
+    padding: calc(var(--nav-height) + 0.75rem) 0 1.5rem;
+
+    border-bottom: none;
+  }
+
+  .back-link {
+    margin-bottom: 1.25rem;
+
+    color: var(--accent-ink);
+
+    font-size: 1.0625rem;
+    font-weight: 500;
+  }
+
+  .project-hero h1 {
+    margin: 0.5rem 0 0.25rem;
+
+    font-size: clamp(2.5rem, 12vw, 3.25rem);
+  }
+
+  .project-subtitle {
+    margin: 0.5rem 0 1rem;
+
+    font-size: 1.25rem;
+  }
+
+  .project-information,
+  .challenges-section {
+    padding-block: 1.5rem;
+
+    background: transparent;
+
+    border: none;
+  }
+
+  .project-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .screenshot-image {
+    border-radius: var(--radius);
+  }
+
+  .features-grid {
+    overflow: hidden;
+
+    background: var(--surface);
+
+    border: none;
+    border-radius: var(--radius);
+  }
+
+  .feature-card {
+    border-right: none;
+    border-bottom: 0.5px solid var(--border-strong);
+  }
+
+  .feature-card:last-child {
+    border-bottom: none;
+  }
+
+  .challenge-list {
+    padding-inline: 1rem;
+
+    background: var(--surface);
+
+    border-top: none;
+    border-radius: var(--radius);
+  }
+
+  .challenge-item {
+    padding: 1rem 0;
+
+    border-bottom: 0.5px solid var(--border-strong);
+  }
+
+  .challenge-item:last-child {
+    border-bottom: none;
+  }
+
+  /* ---------- Fusszeile und Hinweise ---------- */
+
+  .site-footer {
+    margin-top: 1.5rem;
+
+    background: transparent;
+
+    border-top: none;
+  }
+
+  .footer-container {
+    padding-block: 1rem 1.5rem;
+  }
+
+  .footer-controls .theme-toggle,
+  .footer-controls .footer-divider {
+    display: none;
+  }
+
+  .pwa-toast {
+    bottom: calc(
+      var(--tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.75rem
+    );
+  }
+
+  /* Gruppierte Listen (Sprachen, Infos): kompakter */
+
+  .about-panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .level-meter span {
+    width: 1rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .hero h1 span {
+    white-space: normal;
+  }
+}
+
+/* =========================================================
+   17b  MOBILE: WENIGER INHALT
+   Nur Smartphone (≤ 700px). Blendet Doppeltes und Nebensächliches
+   aus, damit die Seiten wie eine App wirken und nicht wie die
+   verkleinerte PC-Ansicht. Laptop und PC bleiben unverändert.
+========================================================= */
+
+@media (max-width: 700px) {
+  .focus-tags,                      /* Tags unter "Was ich mache" */
+  .what-i-do > .container > .project-link, /* "Alle Skills ansehen": Tab "Skills" gibt es unten */
+  .footer-tech,                     /* "Built with Vue & TypeScript" */
+  .about-lead + .about-lead,        /* zweiter Absatz im Über-mich-Kopf */
+  .about-hero .hero-buttons,        /* doppelt zur Tab-Leiste */
+  .hero .hero-buttons .button.secondary, /* "Über mich": Tab "Über mich" gibt es unten */
+  .gh-bio,
+  .radar-description,
+  .information-sidebar,             /* Technologien/Projekt doppeln den Seitenkopf */
+  .repo-list li:nth-child(n + 3) {
+    /* nur die 2 neuesten Repos */
+    display: none;
+  }
+}
+
+/* =========================================================
+   17c  MOBILE: QUALIFIKATIONEN (iPhone-Stil, ≤ 700px)
+   Suchleiste wie in iOS, kompakte Karten, Seitenwechsel mit Pfeilen
+   und das Zertifikat als Sheet von unten. Desktop bleibt unverändert.
+========================================================= */
+
+@media (max-width: 700px) {
+  .qualifications-page {
+    padding: calc(var(--nav-height) + 0.5rem) var(--gutter) 1.5rem;
+  }
+
+  .qualifications-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .qualifications-page .eyebrow {
+    margin-bottom: 0.5rem;
+
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+  }
+
+  .eyebrow-line {
+    display: none;
+  }
+
+  .qualifications-header h1 {
+    font-size: 2.125rem;
+    line-height: 1.1;
+
+    letter-spacing: -0.02em;
+  }
+
+  .page-description {
+    margin-top: 0.625rem;
+
+    font-size: 1rem;
+  }
+
+  /* Suche und Filter: 16px Schrift, sonst zoomt iOS beim Antippen */
+
+  .toolbar {
+    gap: 0.625rem;
+  }
+
+  .search-field {
+    min-height: 2.75rem;
+
+    padding: 0 0.875rem;
+
+    background: var(--surface);
+
+    border: none;
+    border-radius: 0.75rem;
+  }
+
+  .search-field input {
+    padding: 0.625rem 0;
+
+    font-size: 1rem;
+
+    text-overflow: ellipsis;
+  }
+
+  .toolbar-controls {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .select-wrapper select {
+    min-height: 2.75rem;
+
+    padding: 0 1.75rem 0 0.75rem;
+
+    border: none;
+    border-radius: 0.75rem;
+
+    font-size: 1rem;
+  }
+
+  .select-chevron {
+    right: 0.625rem;
+  }
+
+  .results-info {
+    margin: 1rem 0 0.75rem;
+
+    font-size: 0.875rem;
+  }
+
+  /* Karten */
+
+  .qualification-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .qualification-card {
+    padding: 1.125rem;
+
+    border-radius: var(--radius);
+  }
+
+  .qualification-card:hover {
+    transform: none;
+    border-color: var(--border);
+  }
+
+  .qualification-card:active {
+    transform: scale(0.985);
+  }
+
+  .card-top {
+    margin-bottom: 0.875rem;
+  }
+
+  .issuer-logo {
+    width: 2.5rem;
+    height: 2.5rem;
+
+    border-radius: 0.75rem;
+  }
+
+  .category-badge {
+    padding: 0.25rem 0.625rem;
+
+    background: var(--accent-tint);
+
+    border: none;
+    border-radius: 999px;
+
+    color: var(--accent-ink);
+
+    font-size: 0.75rem;
+  }
+
+  .issuer-name {
+    font-size: 0.75rem;
+  }
+
+  .card-body h2 {
+    font-size: 1.1875rem;
+  }
+
+  .qualification-description {
+    display: -webkit-box;
+
+    margin-top: 0.75rem;
+
+    overflow: hidden;
+
+    font-size: 0.9375rem;
+    line-height: 1.55;
+
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  .qualifications-page .skills-list {
+    gap: 0.375rem;
+
+    margin-top: 0.875rem;
+    padding: 0;
+
+    background: none;
+
+    border: none;
+    border-radius: 0;
+  }
+
+  .skill-tag {
+    padding: 0.25rem 0.625rem;
+
+    background: var(--surface-light);
+
+    border: none;
+    border-radius: 999px;
+
+    font-size: 0.75rem;
+  }
+
+  /* nur die ersten 3 Skill-Tags */
+
+  .qualifications-page .skills-list .skill-tag:nth-child(n + 4) {
+    display: none;
+  }
+
+  .card-footer {
+    flex-direction: row;
+    align-items: center;
+
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+  }
+
+  .date-info,
+  .verification-status {
+    font-size: 0.8125rem;
+  }
+
+  .card-details {
+    gap: 0.5rem;
+
+    margin-top: 0.875rem;
+    padding-top: 0.75rem;
+  }
+
+  /* Zertifikatsnummer und Offizielle Website: auf dem Handy ausgeblendet */
+
+  .credential-id,
+  .secondary-link {
+    display: none;
+  }
+
+  .card-links {
+    gap: 0.5rem;
+  }
+
+  .card-link,
+  .certificate-button {
+    min-height: 2.25rem;
+
+    padding: 0.5rem 0.875rem;
+
+    background: var(--accent-tint);
+
+    border-radius: 999px;
+
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .empty-state {
+    padding: 2.5rem 1.25rem;
+
+    border-radius: var(--radius);
+  }
+
+  /* Seitenwechsel: nur Pfeile und Zähler */
+
+  .pagination {
+    flex-direction: row;
+    align-items: center;
+
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+  }
+
+  .pagination-summary {
+    font-size: 0.875rem;
+  }
+
+  .pagination-controls {
+    width: auto;
+  }
+
+  .page-number {
+    display: none;
+  }
+
+  .page-arrow {
+    min-width: 2.75rem;
+    height: 2.75rem;
+
+    border: none;
+    border-radius: 0.75rem;
+  }
+
+  /* Zertifikat als Sheet von unten */
+
+  .certificate-modal {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+  .certificate-modal-content {
+    width: 100%;
+    max-height: 92vh;
+    max-height: 92dvh;
+
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    background: var(--surface);
+
+    border-bottom: none;
+    border-radius: 1.25rem 1.25rem 0 0;
+
+    animation: sheet-up 0.3s ease-out both;
+  }
+
+  .certificate-modal-content::before {
+    content: "";
+
+    display: block;
+    flex-shrink: 0;
+
+    width: 2.25rem;
+    height: 0.3125rem;
+
+    margin: 0.5rem auto 0;
+
+    border-radius: 999px;
+    background: var(--border-strong);
+  }
+
+  .certificate-modal-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .certificate-modal-header h2 {
+    font-size: 1.0625rem;
+  }
+
+  .certificate-image-container {
+    padding: 0.75rem;
+  }
+
+  .certificate-preview {
+    max-height: 60vh;
+  }
+
+  .certificate-modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+
+    padding: 0.75rem 1rem 1rem;
+
+    text-align: center;
+  }
+
+  .modal-done {
+    min-height: 3rem;
+
+    border-radius: 0.875rem;
+
+    font-size: 1.0625rem;
+  }
+
+  .modal-open-link {
+    padding: 0.5rem;
+
+    font-size: 0.9375rem;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: none;
   }
 }
