@@ -48,13 +48,6 @@ const stats = [
   { label: "Jahre in der IT", value: yearsInIt },
 ];
 
-/* Hero: die ersten Screenshots der Projekte als "Fenster" */
-
-const heroWindows = projectList.slice(0, 3).map((project) => ({
-  id: project.id,
-  image: project.thumbnail ?? "",
-}));
-
 /* Fehlt ein Bild, verschwindet es und die Karte zeigt nur den Verlauf */
 
 function hideBrokenImage(event: Event) {
@@ -91,19 +84,37 @@ function hideBrokenImage(event: Event) {
                 Über mich
               </RouterLink>
             </div>
+
+            <!-- Zahlen aus den Projekten -->
+            <dl class="hero-stats" aria-label="Auf einen Blick">
+              <div v-for="stat in stats" :key="stat.label">
+                <dt>{{ stat.label }}</dt>
+                <dd>{{ stat.value }}</dd>
+              </div>
+            </dl>
           </div>
 
-          <!-- Projekt-Fenster (nur dekorativ, ab Tablet quer sichtbar) -->
-          <div class="hero-visual" aria-hidden="true">
-            <img
-              v-for="shot in heroWindows"
-              :key="shot.id"
-              :src="shot.image"
-              alt=""
-              class="hero-window"
-              decoding="async"
-              @error="hideBrokenImage"
-            />
+          <!-- Porträt (Über mich) -->
+          <div class="hero-portrait">
+            <div class="portrait-glow" aria-hidden="true"></div>
+
+            <figure class="portrait-card">
+              <img
+                :src="portrait"
+                alt="Portrait von Ziyam Alphonsus"
+                width="736"
+                height="736"
+                decoding="async"
+              />
+
+              <figcaption>
+                <p class="portrait-name">Ziyam Alphonsus</p>
+
+                <p class="portrait-role">
+                  Informatiker mit vielseitigem IT-Fokus
+                </p>
+              </figcaption>
+            </figure>
           </div>
         </div>
       </section>
@@ -122,18 +133,6 @@ function hideBrokenImage(event: Event) {
               {{ technology }}
             </li>
           </ul>
-        </div>
-      </section>
-
-      <!-- Zahlen aus den Projekten -->
-      <section class="about-stats" aria-label="Auf einen Blick">
-        <div class="container">
-          <dl v-reveal class="stats-grid">
-            <div v-for="stat in stats" :key="stat.label">
-              <dt>{{ stat.label }}</dt>
-              <dd>{{ stat.value }}</dd>
-            </div>
-          </dl>
         </div>
       </section>
 
@@ -256,42 +255,6 @@ function hideBrokenImage(event: Event) {
         </div>
       </section>
 
-      <!-- Über mich (Teaser) -->
-      <section class="section home-about">
-        <div v-reveal class="home-about-card">
-          <img
-            :src="portrait"
-            alt="Portrait von Ziyam Alphonsus"
-            class="home-about-photo"
-            width="736"
-            height="736"
-            loading="lazy"
-            decoding="async"
-          />
-
-          <div class="home-about-text">
-            <p class="eyebrow">ÜBER MICH</p>
-
-            <h2>Informatiker mit vielseitigem IT-Fokus.</h2>
-
-            <p>
-              Informatiker EFZ mit Fachrichtung Betriebsinformatik. Neben dem
-              Studium in Digital Business &amp; AI setze ich IT-Lösungen von der
-              Idee bis zur Umsetzung um.
-            </p>
-
-            <ul class="about-chips">
-              <li>Informatiker EFZ</li>
-              <li>BSc Digital Business &amp; AI</li>
-            </ul>
-
-            <RouterLink to="/about" class="button secondary">
-              Mehr über mich
-            </RouterLink>
-          </div>
-        </div>
-      </section>
-
       <!-- Contact -->
       <section id="contact" class="section contact">
         <div v-reveal class="contact-box">
@@ -307,7 +270,7 @@ function hideBrokenImage(event: Event) {
             mich auf deine Nachricht.
           </p>
 
-          <a href="mailto:deine.email@example.com" class="button primary">
+          <a href="mailto:ziyam2@icloud.com" class="button primary">
             E-Mail schreiben
           </a>
         </div>

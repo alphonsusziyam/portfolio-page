@@ -25,9 +25,11 @@
          flaches Querformat (Smartphone quer)
    16  Fernseher & grosse Displays (≥ 1600px)
    16b Qualifikationen (Zertifikate-Seite)
+   16c Startseite: Feinschliff
    17  Mobile App (iPhone-Stil, ≤ 700px)
    17b Mobile: weniger Inhalt
    17c Mobile: Qualifikationen
+   17d Mobile: Startseite
 
    Alle Grössen sind in rem angegeben. Ab 1600px Breite wächst
    die Basisschrift mit (siehe Abschnitt 2 / 16), dadurch
@@ -94,7 +96,7 @@
   /* Layout */
   --container: 75rem;
   --gutter: clamp(1rem, 4vw, 2rem);
-  --section-space: clamp(5rem, 10vw, 7.5rem);
+  --section-space: clamp(4rem, 8vw, 6.5rem);
   --nav-height: 4.5rem;
   --radius: 0.625rem;
 }
@@ -558,80 +560,226 @@ html.theme-transition *::after {
   margin-top: 2.25rem;
 }
 
-/* Hero mit Projekt-Fenstern */
+/* Hero: Text links, Porträt rechts */
 
-.hero-avatar {
-  display: none;
+/* Glow und Etiketten dürfen nicht über den Seitenrand ragen */
+
+.hero {
+  overflow-x: clip;
 }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
   align-items: center;
 
   gap: clamp(2rem, 5vw, 4rem);
 }
 
-.hero-visual {
-  position: relative;
+/* Label als Pille mit Punkt */
 
-  aspect-ratio: 1 / 0.95;
-}
+.hero-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
 
-.hero-window {
-  position: absolute;
-
-  width: 78%;
-  height: auto;
+  margin-bottom: 1.5rem;
+  padding: 0.4375rem 1rem;
 
   background: var(--surface);
 
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+}
+
+.hero-label::before {
+  content: "";
+
+  flex-shrink: 0;
+
+  width: 0.4375rem;
+  height: 0.4375rem;
+
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* Zahlen direkt unter den Buttons */
+
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 1.5rem 2.75rem;
+
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+
+  border-top: 1px solid var(--border);
+}
+
+.hero-stats > div {
+  display: flex;
+  flex-direction: column-reverse;
+
+  gap: 0.25rem;
+}
+
+.hero-stats dd {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1;
+
+  letter-spacing: -0.03em;
+}
+
+.hero-stats dt {
+  color: var(--text-muted);
+
+  font-size: 0.8125rem;
+}
+
+/* Porträt mit Glow, Namensleiste und zwei schwebenden Etiketten */
+
+.hero-portrait {
+  position: relative;
+
+  justify-self: center;
+
+  width: min(100%, 24rem);
+
+  animation: rise 0.8s ease-out 0.15s both;
+}
+
+.portrait-glow {
+  position: absolute;
+  inset: -14% -18%;
+
+  background: radial-gradient(50% 50% at 50% 48%, var(--glow), transparent 72%);
+
+  filter: blur(12px);
+
+  pointer-events: none;
+}
+
+.portrait-card {
+  position: relative;
+  z-index: 1;
+
+  aspect-ratio: 10 / 11;
+
+  margin: 0;
+
+  overflow: hidden;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border-strong);
+  border-radius: 1.75rem;
+
+  box-shadow: var(--shadow-cover);
+}
+
+.portrait-card img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: 50% 22%;
+}
+
+/* dunkler Verlauf unten, damit der weisse Name in beiden Themes lesbar ist */
+
+.portrait-card::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.4) 30%,
+    transparent 56%
+  );
+
+  pointer-events: none;
+}
+
+.portrait-card figcaption {
+  position: absolute;
+  z-index: 2;
+
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
+
+  color: #ffffff;
+}
+
+.portrait-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+
+  letter-spacing: -0.02em;
+}
+
+.portrait-role {
+  margin-top: 0.25rem;
+
+  color: rgba(255, 255, 255, 0.8);
+
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.portrait-badges {
+  list-style: none;
+}
+
+.badge {
+  position: absolute;
+  z-index: 3;
+
+  padding: 0.5rem 0.9375rem;
+
+  background: var(--nav-bg);
+
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
 
   box-shadow: var(--shadow-cover);
 
-  animation: float 7s ease-in-out infinite alternate;
+  color: var(--text);
+
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
-.hero-window:nth-child(1) {
-  top: 0;
-  left: 0;
-
-  rotate: -4deg;
+.badge-top {
+  top: 2rem;
+  right: -1.5rem;
 }
 
-.hero-window:nth-child(2) {
-  top: 27%;
-  right: 0;
-
-  rotate: 3deg;
-
-  animation-delay: -2.5s;
-}
-
-.hero-window:nth-child(3) {
-  bottom: 0;
-  left: 8%;
-
-  rotate: -1.5deg;
-
-  animation-delay: -5s;
-}
-
-@keyframes float {
-  from {
-    translate: 0 -0.35rem;
-  }
-
-  to {
-    translate: 0 0.35rem;
-  }
+.badge-bottom {
+  top: 52%;
+  left: -2rem;
 }
 
 @media (min-width: 851px) {
   .hero h1 {
-    font-size: clamp(2.75rem, 5.4vw, 4.5rem);
+    font-size: clamp(2.5rem, 4.4vw, 4rem);
+  }
+
+  /* "& Systemtechnik" bleibt in einer Zeile */
+
+  .hero h1 span {
+    white-space: nowrap;
   }
 }
 
@@ -729,55 +877,6 @@ html.theme-transition *::after {
     opacity: 1;
     transform: none;
   }
-}
-
-/* Über mich (Teaser) */
-
-.home-about-card {
-  display: grid;
-  grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
-  align-items: center;
-
-  gap: clamp(1.5rem, 4vw, 3rem);
-
-  padding: clamp(1.5rem, 4vw, 2.75rem);
-
-  background: var(--surface);
-
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-
-  box-shadow: var(--shadow-card);
-}
-
-.home-about-photo {
-  width: 100%;
-  aspect-ratio: 1;
-
-  object-fit: cover;
-
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-}
-
-.home-about-text h2 {
-  margin: 0.75rem 0 1rem;
-
-  font-size: clamp(1.75rem, 3.6vw, 2.5rem);
-  line-height: 1.15;
-
-  letter-spacing: -0.03em;
-}
-
-.home-about-text > p:not(.eyebrow) {
-  max-width: 36rem;
-
-  color: var(--text-muted);
-  line-height: 1.75;
-}
-
-.home-about-text .button {
-  margin-top: 1.5rem;
 }
 
 /* Was ich mache */
@@ -2988,6 +3087,10 @@ body {
     color: var(--text);
   }
 
+  .focus-item:hover {
+    border-color: var(--accent-ink);
+  }
+
   .about-card:hover {
     background: var(--surface-light);
   }
@@ -3148,8 +3251,64 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .hero-visual {
+  /* Porträt: kompakte Profil-Kopfzeile ganz oben */
+
+  .hero-portrait {
+    order: -1;
+
+    justify-self: stretch;
+
+    width: 100%;
+  }
+
+  .portrait-glow,
+  .portrait-badges {
     display: none;
+  }
+
+  .portrait-card {
+    display: flex;
+    align-items: center;
+
+    gap: 1rem;
+
+    aspect-ratio: auto;
+
+    padding: 0.875rem 1.125rem;
+
+    overflow: visible;
+
+    border-radius: var(--radius);
+
+    box-shadow: none;
+  }
+
+  .portrait-card img {
+    flex-shrink: 0;
+
+    width: 4rem;
+    height: 4rem;
+
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+  }
+
+  .portrait-card::after {
+    display: none;
+  }
+
+  .portrait-card figcaption {
+    position: static;
+
+    color: var(--text);
+  }
+
+  .portrait-name {
+    font-size: 1.25rem;
+  }
+
+  .portrait-role {
+    color: var(--text-muted);
   }
 
   /* Projektseite: Screenshots untereinander */
@@ -3668,20 +3827,6 @@ body {
   .about-card {
     border: 1px solid var(--border);
     border-radius: var(--radius);
-  }
-
-  /* Startseite: Über-mich-Teaser */
-
-  .home-about-card {
-    grid-template-columns: 1fr;
-  }
-
-  .home-about-photo {
-    justify-self: center;
-
-    width: 8.5rem;
-
-    border-radius: 50%;
   }
 
   .ticker-group li {
@@ -4477,6 +4622,100 @@ body {
 }
 
 /* =========================================================
+   16c  STARTSEITE: FEINSCHLIFF (alle Breiten)
+   Ruhigere Abstände, Karten statt Linien, Akzentlinien. Die
+   Handy-Anpassungen dazu stehen in 17d.
+========================================================= */
+
+/* Überschriften mit kleiner Akzentlinie */
+
+.section-heading .eyebrow,
+.section-heading .section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.section-heading .eyebrow::before,
+.section-heading .section-label::before {
+  content: "";
+
+  width: 1.5rem;
+  height: 2px;
+
+  background: var(--accent);
+}
+
+/* Projekte: etwas mehr Luft */
+
+.projects-grid {
+  gap: 1.5rem;
+}
+
+/* Was ich mache: Karten statt Linien */
+
+.focus-grid {
+  gap: 1.25rem;
+
+  border: none;
+}
+
+.focus-item,
+.focus-item + .focus-item {
+  grid-template-columns: 1fr;
+  gap: 0.875rem;
+
+  padding: 2rem;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+
+  box-shadow: var(--shadow-card);
+}
+
+.focus-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  justify-self: start;
+
+  width: 2.25rem;
+  height: 2.25rem;
+
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+}
+
+.focus-item h3 {
+  font-size: 1.375rem;
+}
+
+.focus-tags span {
+  padding: 0.3125rem 0.75rem;
+
+  border-radius: 999px;
+}
+
+.what-i-do .project-link {
+  margin-top: 2rem;
+}
+
+/* Kontakt: sanfter Schein oben, kein doppelter Abstand zum Abschnitt davor */
+
+.contact {
+  padding-block: 0 var(--section-space);
+}
+
+.contact-box {
+  background:
+    radial-gradient(70% 90% at 50% 0%, var(--glow), transparent 70%),
+    var(--surface);
+}
+
+/* =========================================================
    17  MOBILE APP (iPhone-Stil, ≤ 700px)
 
    Ziel: iPhone 14 Pro (393 × 852). Auf dem Handy sieht die Seite
@@ -4708,7 +4947,6 @@ body {
   .timeline-item,
   .panel,
   .contact-box,
-  .home-about-card,
   .skill-note,
   .skills-list,
   .repo-card,
@@ -4729,20 +4967,6 @@ body {
     min-height: auto;
 
     padding-block: 1.25rem 1.5rem;
-  }
-
-  .hero-avatar {
-    display: block;
-
-    width: 4rem;
-    height: 4rem;
-
-    margin-bottom: 1rem;
-
-    object-fit: cover;
-
-    border: 2px solid var(--accent);
-    border-radius: 50%;
   }
 
   .hero-label {
@@ -5390,5 +5614,67 @@ body {
 
   to {
     transform: none;
+  }
+}
+
+/* =========================================================
+   17d  MOBILE: STARTSEITE (≤ 700px)
+   Zahlen als Widgets, kompaktere Karten. Steht nach 16c und
+   überschreibt dessen Abstände auf dem Handy.
+========================================================= */
+
+@media (max-width: 700px) {
+  .hero-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 0.75rem;
+
+    margin-top: 1.5rem;
+    padding-top: 0;
+
+    border-top: none;
+  }
+
+  .hero-stats > div {
+    padding: 1rem 1.125rem;
+
+    background: var(--surface);
+
+    border-radius: var(--radius);
+  }
+
+  .hero-stats dd {
+    font-size: 2rem;
+  }
+
+  .focus-grid {
+    gap: 0.75rem;
+  }
+
+  .focus-item,
+  .focus-item + .focus-item {
+    gap: 0.5rem;
+
+    padding: 1.25rem;
+  }
+
+  .focus-item h3 {
+    font-size: clamp(1.125rem, 5.6vw, 1.375rem);
+  }
+
+  .projects-grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .hero-label {
+    border-radius: 1rem;
   }
 }

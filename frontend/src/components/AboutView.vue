@@ -183,7 +183,7 @@ const spokenLanguages = [
         <div class="about-hero-text">
           <p class="section-label">ÜBER MICH</p>
 
-          <h1>Hi, ich bin <span>Ziyam.</span></h1>
+          <h1>Hallo, ich bin <span>Ziyam.</span></h1>
 
           <p class="about-lead">
             Informatiker EFZ mit Fachrichtung Betriebsinformatik. Ich verbinde
