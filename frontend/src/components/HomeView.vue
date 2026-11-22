@@ -10,7 +10,7 @@ import { vReveal } from "../directives/reveal";
 
 const IT_START = new Date(2020, 7, 1); // August 2020
 
-const portrait = new URL("../assets/ziyam.jpg", import.meta.url).href;
+const portrait = new URL("../assets/ziyam.png", import.meta.url).href;
 
 /* Alle verwendeten Technologien (ohne Doppelte) für den Ticker */
 

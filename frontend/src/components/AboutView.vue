@@ -13,7 +13,7 @@ const GITHUB_USER = "alphonsusziyam";
 const LINKEDIN_URL = "https://ch.linkedin.com/in/ziyam-alphonsus-a45b39205";
 const IT_START = new Date(2020, 7, 1); // August 2020
 
-const portrait = new URL("../assets/ziyam.jpg", import.meta.url).href;
+const portrait = new URL("../assets/ziyam.png", import.meta.url).href;
 
 /* =========================================
    LIVE-DATEN (APIs)
